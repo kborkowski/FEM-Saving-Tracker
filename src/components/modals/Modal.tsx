@@ -37,6 +37,7 @@ export default function Modal({ children, title, onClose }: ModalProps) {
             <img src={iconCross} alt="" />
           </button>
         </div>
+        <div className="modal-divider" />
         {children}
       </div>
     </div>

@@ -19,9 +19,11 @@ export default function DeleteModal({ goalId }: DeleteModalProps) {
 
   return (
     <Modal title="Delete Goal" onClose={handleClose}>
-      <p className="delete-warning">
-        Are you sure you want to delete <strong>{goal?.name ?? 'this goal'}</strong>? This action cannot be undone and all deposit history will be lost.
-      </p>
+      <div className="modal-body">
+        <p className="delete-warning">
+          Are you sure you want to delete <strong>{goal?.name ?? 'this goal'}</strong>? This action cannot be undone and all deposit history will be lost.
+        </p>
+      </div>
       <div className="modal-actions">
         <button className="btn btn-secondary" onClick={handleClose}>Cancel</button>
         <button className="btn btn-danger" onClick={handleDelete}>Delete Goal</button>
