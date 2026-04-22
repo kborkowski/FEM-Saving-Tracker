@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "appId": "916dfee5-06be-4f36-a888-8ab7445da52e",
+  "appDisplayName": "Savings Tracker",
+  "region": "prod",
+  "environmentId": "a922759f-9738-e669-bf1b-cee5d042d90d",
+  "description": " ",
+  "buildPath": "./dist",
+  "buildEntryPoint": "index.html",
+  "localAppUrl": "http://localhost:3000",
+  "logoPath": "Default",
+  "connectionReferences": {},
+  "databaseReferences": {}
+}
