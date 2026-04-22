@@ -2,7 +2,7 @@
 
 /* ── Hover & focus additions ── */
 .detail-action-btn--danger:hover{background:#1F1F1F}
-.detail-action-btn:focus-visible{outline:none;box-shadow:0 0 0 2px #101010,0 0 0 4px #FF5722}
+.detail-action-btn:focus-visible{outline:none;box-shadow:0 0 0 2px #101010,0 0 0 4px #FF5722}.detail-action-btn--danger:focus-visible{outline:none;box-shadow:0 0 0 2px #101010,0 0 0 4px #EF4444}
 .goal-detail-back:hover{background:var(--color-surface);color:var(--color-text-primary)}
 .goal-detail-back:focus-visible{outline:none;background:#101010;box-shadow:0 0 0 2px #101010,0 0 0 4px #FF5722;border-radius:999px}
 .goal-card:focus-visible{outline:none;box-shadow:0 0 0 2px #101010,0 0 0 4px var(--color-accent)}
