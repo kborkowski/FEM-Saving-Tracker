@@ -3,6 +3,8 @@ import { formatCurrency, getTotalSaved, getActiveGoalsCount, getCompletedGoalsCo
 
 export default function StatsBar() {
   const { state } = useGoals();
+  const activeCount = getActiveGoalsCount(state.goals);
+  const completedCount = getCompletedGoalsCount(state.goals);
   return (
     <div className="stats-bar">
       <div className="stat-card stat-card--total">
@@ -11,12 +13,13 @@ export default function StatsBar() {
       </div>
       <div className="stat-card">
         <span className="stat-label">Active goals</span>
-        <span className="stat-value">{getActiveGoalsCount(state.goals)}</span>
+        <span className={`stat-value ${activeCount > 0 ? 'stat-value--active' : 'stat-value--zero'}`}>{activeCount}</span>
       </div>
       <div className="stat-card">
         <span className="stat-label">Goals completed</span>
-        <span className="stat-value">{getCompletedGoalsCount(state.goals)}</span>
+        <span className={`stat-value ${completedCount > 0 ? 'stat-value--completed' : 'stat-value--zero'}`}>{completedCount}</span>
       </div>
     </div>
   );
 }
+
