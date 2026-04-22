@@ -1,7 +1,8 @@
 import type { Goal, GoalStatus, FilterType, SortType } from './types';
 
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
+export function formatCurrency(amount: number, showCents = false): string {
+  const digits = showCents ? 2 : 0;
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: digits, maximumFractionDigits: digits }).format(amount);
 }
 
 export function computeProgress(goal: Goal): number {

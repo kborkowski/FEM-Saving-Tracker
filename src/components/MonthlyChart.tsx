@@ -23,7 +23,7 @@ export default function MonthlyChart() {
   if (data.length === 0) return null;
 
   const maxVal = Math.max(...data.map(d => d.total));
-  const chartAreaHeight = 202;
+  const barAreaHeight = 144;
 
   return (
     <div className="monthly-chart-section">
@@ -33,7 +33,7 @@ export default function MonthlyChart() {
           const barPct = maxVal > 0 ? (d.total / maxVal) * 100 : 0;
           return (
             <div key={d.month} className="chart-col">
-              <div className="chart-bar-area" style={{ height: chartAreaHeight }}>
+              <div className="chart-bar-area" style={{ height: barAreaHeight }}>
                 <div className="chart-bar" style={{ height: `${barPct}%` }} />
               </div>
               <div className="chart-label">

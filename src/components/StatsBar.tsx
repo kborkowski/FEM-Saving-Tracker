@@ -9,7 +9,7 @@ export default function StatsBar() {
     <div className="stats-bar">
       <div className="stat-card stat-card--total">
         <span className="stat-label">Total savings</span>
-        <span className="stat-value">{formatCurrency(getTotalSaved(state.goals))}</span>
+        <span className="stat-value">{formatCurrency(getTotalSaved(state.goals), true)}</span>
       </div>
       <div className="stat-card">
         <span className="stat-label">Active goals</span>
