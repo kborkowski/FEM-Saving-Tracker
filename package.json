@@ -1,13 +1,14 @@
 {
   "name": "vite",
   "private": true,
-  "version": "1.2.2",
+  "version": "1.2.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "node scripts/patch-push-tool.js"
   },
   "dependencies": {
     "@microsoft/power-apps": "^1.0.3",
