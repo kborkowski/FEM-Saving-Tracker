@@ -4,6 +4,7 @@ import { computeProgress, getGoalStatus, formatCurrency, formatDate, generateId 
 import iconChevronLeft from '../assets/images/icon-chevron-left.svg';
 import iconCheckmark from '../assets/images/icon-checkmark.svg';
 import iconArrowDown from '../assets/images/icon-arrow-down.svg';
+import iconError from '../assets/images/icon-error.svg';
 
 interface GoalDetailProps {
   goalId: string;
@@ -203,7 +204,12 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
                       onChange={e => { setDepositAmount(e.target.value); setDepositError(''); }}
                     />
                   </div>
-                  {depositError && <span className="deposit-form-error">{depositError}</span>}
+                  {depositError && (
+                    <div className="deposit-form-error">
+                      <img src={iconError} alt="" width="20" height="20" />
+                      <span>{depositError}</span>
+                    </div>
+                  )}
                 </div>
                 <div className="deposit-form-field">
                   <label className="deposit-form-label" htmlFor="deposit-note">Note (optional)</label>
