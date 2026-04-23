@@ -42,8 +42,6 @@ The app uses two custom Dataverse tables in the **Saving Tracker Solution** (`Sa
 | Goal Name | `krbork_name` | Single line of text | Primary column |
 | Target Amount | `krbork_targetamount` | Decimal | Target savings amount |
 | Deadline | `krbork_deadline` | Date Only | Optional deadline |
-| Color | `krbork_color` | Single line of text | Hex colour for the card |
-| Icon | `krbork_icon` | Single line of text | Icon identifier |
 
 ### `krbork_deposit` — Deposit
 
