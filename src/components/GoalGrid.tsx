@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useGoals } from '../context/GoalsContext';
 import { filterGoals, sortGoals } from '../utils';
 import GoalCard from './GoalCard';
@@ -32,6 +32,98 @@ function desktopCardStyle(posInGroup: number): React.CSSProperties {
   return style;
 }
 
+interface DropdownProps<T extends string> {
+  options: { value: T; label: string }[];
+  value: T;
+  isOpen: boolean;
+  label: string;
+  icon: string;
+  onToggle: () => void;
+  onClose: () => void;
+  onSelect: (value: T) => void;
+}
+
+function Dropdown<T extends string>({ options, value, isOpen, label, icon, onToggle, onClose, onSelect }: DropdownProps<T>) {
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+
+  // Focus active option when dropdown opens
+  useEffect(() => {
+    if (isOpen && listRef.current) {
+      const active = listRef.current.querySelector<HTMLElement>('[aria-selected="true"]')
+        ?? listRef.current.querySelector<HTMLElement>('[role="option"]');
+      active?.focus();
+    }
+  }, [isOpen]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent, optValue: T, index: number) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onSelect(optValue);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      onClose();
+      triggerRef.current?.focus();
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const items = listRef.current?.querySelectorAll<HTMLElement>('[role="option"]');
+      items?.[Math.min(index + 1, (items.length ?? 1) - 1)]?.focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const items = listRef.current?.querySelectorAll<HTMLElement>('[role="option"]');
+      items?.[Math.max(index - 1, 0)]?.focus();
+    } else if (e.key === 'Tab') {
+      // Close on Tab so focus naturally moves on
+      onClose();
+    }
+  }, [onSelect, onClose]);
+
+  const handleTriggerKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape' && isOpen) {
+      e.preventDefault();
+      onClose();
+    }
+  };
+
+  return (
+    <div className="pill-dropdown">
+      <button
+        ref={triggerRef}
+        className="pill-btn"
+        onClick={onToggle}
+        onKeyDown={handleTriggerKeyDown}
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+      >
+        <img src={icon} alt="" />
+        {label}
+      </button>
+      {isOpen && (
+        <ul className="pill-dropdown-list" role="listbox" ref={listRef}>
+          <li className="pill-dropdown-label" aria-hidden="true">{label}</li>
+          {options.map((opt, index) => {
+            const isActive = value === opt.value;
+            return (
+              <li
+                key={opt.value}
+                role="option"
+                aria-selected={isActive}
+                className={isActive ? 'active' : ''}
+                tabIndex={0}
+                onClick={() => onSelect(opt.value)}
+                onKeyDown={(e) => handleKeyDown(e, opt.value, index)}
+              >
+                <span className="dropdown-radio">{isActive && <span className="dropdown-radio-dot" />}</span>
+                <span className="dropdown-option-text">{opt.label}</span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export default function GoalGrid() {
   const { state, dispatch } = useGoals();
   const [filterOpen, setFilterOpen] = useState(false);
@@ -45,6 +137,7 @@ export default function GoalGrid() {
   const currentFilterLabel = FILTER_OPTIONS.find(o => o.value === state.filter)?.label ?? 'Filters';
   const currentSortLabel = SORT_OPTIONS.find(o => o.value === state.sort)?.label ?? 'Sort by';
 
+  // Close on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (filterRef.current && !filterRef.current.contains(e.target as Node)) setFilterOpen(false);
@@ -59,66 +152,30 @@ export default function GoalGrid() {
       <div className="goal-grid-header">
         <h2 className="goal-grid-title">Your goals</h2>
         <div className="goal-grid-controls">
-          <div className="pill-dropdown" ref={filterRef}>
-            <button
-              className="pill-btn"
-              onClick={() => { setFilterOpen(v => !v); setSortOpen(false); }}
-              aria-expanded={filterOpen}
-            >
-              <img src={iconFilter} alt="" />
-              {state.filter === 'all' ? 'Filters' : currentFilterLabel}
-            </button>
-            {filterOpen && (
-              <ul className="pill-dropdown-list" role="listbox">
-                <li className="pill-dropdown-label">Filter by</li>
-                {FILTER_OPTIONS.map(opt => {
-                  const isActive = state.filter === opt.value;
-                  return (
-                    <li
-                      key={opt.value}
-                      role="option"
-                      aria-selected={isActive}
-                      className={isActive ? 'active' : ''}
-                      onClick={() => { dispatch({ type: 'SET_FILTER', payload: opt.value }); setFilterOpen(false); }}
-                    >
-                      <span className="dropdown-radio">{isActive && <span className="dropdown-radio-dot" />}</span>
-                      <span className="dropdown-option-text">{opt.label}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+          <div ref={filterRef}>
+            <Dropdown
+              options={FILTER_OPTIONS}
+              value={state.filter}
+              isOpen={filterOpen}
+              label={state.filter === 'all' ? 'Filters' : currentFilterLabel}
+              icon={iconFilter}
+              onToggle={() => { setFilterOpen(v => !v); setSortOpen(false); }}
+              onClose={() => setFilterOpen(false)}
+              onSelect={(v) => { dispatch({ type: 'SET_FILTER', payload: v }); setFilterOpen(false); }}
+            />
           </div>
 
-          <div className="pill-dropdown" ref={sortRef}>
-            <button
-              className="pill-btn"
-              onClick={() => { setSortOpen(v => !v); setFilterOpen(false); }}
-              aria-expanded={sortOpen}
-            >
-              <img src={iconSort} alt="" />
-              {state.sort === 'recently-added' ? 'Sort by' : currentSortLabel}
-            </button>
-            {sortOpen && (
-              <ul className="pill-dropdown-list" role="listbox">
-                <li className="pill-dropdown-label">Sort by</li>
-                {SORT_OPTIONS.map(opt => {
-                  const isActive = state.sort === opt.value;
-                  return (
-                    <li
-                      key={opt.value}
-                      role="option"
-                      aria-selected={isActive}
-                      className={isActive ? 'active' : ''}
-                      onClick={() => { dispatch({ type: 'SET_SORT', payload: opt.value }); setSortOpen(false); }}
-                    >
-                      <span className="dropdown-radio">{isActive && <span className="dropdown-radio-dot" />}</span>
-                      <span className="dropdown-option-text">{opt.label}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+          <div ref={sortRef}>
+            <Dropdown
+              options={SORT_OPTIONS}
+              value={state.sort}
+              isOpen={sortOpen}
+              label={state.sort === 'recently-added' ? 'Sort by' : currentSortLabel}
+              icon={iconSort}
+              onToggle={() => { setSortOpen(v => !v); setFilterOpen(false); }}
+              onClose={() => setSortOpen(false)}
+              onSelect={(v) => { dispatch({ type: 'SET_SORT', payload: v }); setSortOpen(false); }}
+            />
           </div>
         </div>
       </div>
