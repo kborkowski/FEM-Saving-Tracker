@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import Modal from './Modal';
 import { useGoals, useGoalById } from '../../context/GoalsContext';
 import { generateId } from '../../utils';
@@ -22,7 +22,7 @@ export default function GoalModal({ goalId }: GoalModalProps) {
   const nameRef = useRef<HTMLInputElement>(null);
   const targetRef = useRef<HTMLInputElement>(null);
 
-  const handleClose = () => dispatch({ type: 'CLOSE_MODAL' });
+  const handleClose = useCallback(() => dispatch({ type: 'CLOSE_MODAL' }), [dispatch]);
 
   const handleSubmit = () => {
     const newErrors: { name?: string; target?: string } = {};

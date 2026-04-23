@@ -27,14 +27,20 @@ export default function Modal({ children, title, onClose }: ModalProps) {
     return () => { document.body.style.overflow = prev; };
   }, []);
 
-  // Focus trap + initial focus + Escape
+  // Initial focus — runs once on mount only
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const focusables = () => Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE));
+    focusables()[0]?.focus();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Focus trap + Escape — re-subscribes only when onClose changes
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
 
-    // Focus the first focusable element on open
     const focusables = () => Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE));
-    focusables()[0]?.focus();
 
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
