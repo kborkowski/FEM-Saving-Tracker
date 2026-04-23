@@ -32,7 +32,9 @@ export default function Modal({ children, title, onClose }: ModalProps) {
     const dialog = dialogRef.current;
     if (!dialog) return;
     const focusables = () => Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE));
-    focusables()[0]?.focus();
+    // Skip the close button (first in DOM) — focus the first content element instead
+    const first = focusables().find(el => !el.classList.contains('modal-close')) ?? focusables()[0];
+    first?.focus();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Focus trap + Escape — re-subscribes only when onClose changes
