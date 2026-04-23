@@ -1,6 +1,15 @@
 import { useEffect, useRef } from 'react';
 import { iconCross } from '../../assets/images';
 
+const FOCUSABLE = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(',');
+
 interface ModalProps {
   children: React.ReactNode;
   title: string;
@@ -11,16 +20,48 @@ export default function Modal({ children, title, onClose }: ModalProps) {
   const titleId = 'modal-title';
   const dialogRef = useRef<HTMLDivElement>(null);
 
+  // Scroll lock
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = prev; };
   }, []);
 
+  // Focus trap + initial focus + Escape
   useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    // Focus the first focusable element on open
+    const focusables = () => Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE));
+    focusables()[0]?.focus();
+
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+
+      const els = focusables();
+      if (els.length === 0) return;
+
+      const first = els[0];
+      const last = els[els.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
+
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
   }, [onClose]);
