@@ -18,7 +18,6 @@ export default function GoalModal({ goalId }: GoalModalProps) {
   const [name, setName] = useState(existing?.name ?? '');
   const [target, setTarget] = useState(existing?.target?.toString() ?? '');
   const [deadline, setDeadline] = useState(existing?.deadline ?? '');
-  const [deadlineFocused, setDeadlineFocused] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; target?: string }>({});
 
   const handleClose = () => dispatch({ type: 'CLOSE_MODAL' });
@@ -101,13 +100,10 @@ export default function GoalModal({ goalId }: GoalModalProps) {
           <img src={iconCalendar} className="form-input-icon" alt="" />
           <input
             id="goal-deadline"
-            className="form-input has-icon deadline-input"
-            type={deadline || deadlineFocused ? 'date' : 'text'}
+            className={`form-input has-icon deadline-input${!deadline ? ' deadline-empty' : ''}`}
+            type="date"
             value={deadline ?? ''}
-            placeholder="Select a date"
             onChange={e => setDeadline(e.target.value)}
-            onFocus={() => setDeadlineFocused(true)}
-            onBlur={() => setDeadlineFocused(false)}
           />
         </div>
       </div>
