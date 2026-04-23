@@ -3,7 +3,6 @@
 // because the app is served from a deep URL, not the domain root.
 
 import logoSmall from './images/logo-small.svg';
-import logoLarge from './images/logo-large.svg';
 import iconArrowDown from './images/icon-arrow-down.svg';
 import iconCalendar from './images/icon-calendar.svg';
 import iconCheckmark from './images/icon-checkmark.svg';
@@ -16,11 +15,9 @@ import iconPlus from './images/icon-plus.svg';
 import iconSort from './images/icon-sort.svg';
 import iconTarget from './images/icon-target.svg';
 import patternGrid from './images/pattern-grid.svg';
-import patternStar from './images/pattern-star.svg';
 
 export {
   logoSmall,
-  logoLarge,
   iconArrowDown,
   iconCalendar,
   iconCheckmark,
@@ -33,5 +30,4 @@ export {
   iconSort,
   iconTarget,
   patternGrid,
-  patternStar,
 };
