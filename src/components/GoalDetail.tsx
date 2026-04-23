@@ -137,9 +137,9 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
               <img src={iconCheckmark} alt="Complete" />
             </div>
             <div className="goal-hero-summary">
-              <div className="goal-hero-amount">{formatCurrency(totalSaved, true)}</div>
+              <div className="goal-hero-amount">100%</div>
               <div className="goal-hero-status">
-                <div className="goal-hero-title">100% Goal Complete</div>
+                <div className="goal-hero-title">Goal Complete</div>
                 <div className="goal-hero-subtitle">
                   You saved {formatCurrency(totalSaved, true)} across {goal.deposits.length} deposit{goal.deposits.length !== 1 ? 's' : ''}.
                   {goal.deadline && ` Finished before your ${formatDate(goal.deadline)} deadline.`}
