@@ -29,7 +29,6 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
   const sortedDeposits = [...goal.deposits].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
-  const lastDeposit = sortedDeposits[0];
 
   function handleAddDeposit(e: React.FormEvent) {
     e.preventDefault();
@@ -121,12 +120,13 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
 
       {/* Date info */}
       <div className="goal-detail-dates">
+        {goal.deadline && (
+          <>
+            <span>Due {formatDate(goal.deadline)}</span>
+            <span aria-hidden="true">·</span>
+          </>
+        )}
         <span>Created {formatDate(goal.createdAt)}</span>
-        <span>·</span>
-        {lastDeposit
-          ? <span>Last deposit {formatDate(lastDeposit.createdAt)}</span>
-          : <span>No deposits yet</span>
-        }
       </div>
 
       {isCompleted ? (
@@ -167,7 +167,7 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
             <div className="goal-progress-card">
               <div className="progress-info">
                 <span className="progress-pct">{pct}%</span>
-                <span className="progress-remaining">{formatCurrency(remaining)} to go</span>
+                <span className="progress-remaining">{formatCurrency(remaining, true)} remaining</span>
               </div>
               <div className="progress-bar-section">
                 <div className="progress-track">
@@ -175,11 +175,11 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
                 </div>
                 <div className="progress-summary">
                   <div className="progress-amount-info">
-                    <span className="progress-amount-value">{formatCurrency(totalSaved)}</span>
-                    <span className="progress-amount-label">Saved amount</span>
+                    <span className="progress-amount-value">{formatCurrency(totalSaved, true)}</span>
+                     <span className="progress-amount-label">Saved so far</span>
                   </div>
                   <div className="progress-amount-info progress-amount-info--end">
-                    <span className="progress-amount-value">{formatCurrency(goal.target)}</span>
+                    <span className="progress-amount-value">{formatCurrency(goal.target, true)}</span>
                     <span className="progress-amount-label">Target</span>
                   </div>
                 </div>
@@ -188,7 +188,7 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
 
             {/* Inline deposit form */}
             <form className="goal-deposit-form-card" onSubmit={handleAddDeposit}>
-              <h3 className="deposit-form-title">Add a deposit</h3>
+              <h3 className="deposit-form-title">Add deposit</h3>
               <div className="deposit-form-fields">
                 <div className="deposit-form-field">
                   <label className="deposit-form-label" htmlFor="deposit-amount">Amount</label>
@@ -227,7 +227,7 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
                 </div>
               </div>
               <button type="submit" className="deposit-submit-btn">
-                Add deposit
+                Add funds
               </button>
             </form>
           </div>
