@@ -1,75 +1,139 @@
-# React + TypeScript + Vite
+# Savings Tracker — Power Apps Code App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A personal savings goal tracker built as a [Power Apps Code App](https://learn.microsoft.com/en-us/power-apps/maker/canvas-apps/code-components-overview) using **React + TypeScript + Vite**, backed by **Microsoft Dataverse**.
 
-It is preconfigured to work with Power Apps Code Apps.
+> Frontend Mentor challenge design: [Savings Tracker](https://www.frontendmentor.io/)  
+> Figma file: [savings-tracker](https://www.figma.com/design/ngHoDLhrNqmYi7K580gCDf/savings-tracker)
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- Create, edit, and delete savings goals
+- Log deposits against any goal
+- Real-time progress bars and percentage tracking
+- Monthly bar chart of deposit history
+- Filter & sort goals (status, progress, deadline, name)
+- Responsive layout — desktop, tablet, and mobile
+- Full Figma-spec dark theme with Inter & Bricolage Grotesque fonts
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+| Layer | Technology |
+|---|---|
+| Framework | React 19 + TypeScript |
+| Build tool | Vite |
+| Platform | Power Apps Code App (PCF-style web app) |
+| Data | Microsoft Dataverse |
+| Deployment | `power-apps push` via `@microsoft/power-apps-cli` |
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Dataverse Structure
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The app uses two custom Dataverse tables in the **Saving Tracker Solution** (`SavingTrackerSolution`, publisher prefix `krbork_`).
+
+### `krbork_savingsgoal` — Savings Goal
+
+| Column | Logical Name | Type | Notes |
+|---|---|---|---|
+| Goal Name | `krbork_name` | Single line of text | Primary column |
+| Target Amount | `krbork_targetamount` | Decimal | Target savings amount |
+| Deadline | `krbork_deadline` | Date Only | Optional deadline |
+| Color | `krbork_color` | Single line of text | Hex colour for the card |
+| Icon | `krbork_icon` | Single line of text | Icon identifier |
+
+### `krbork_deposit` — Deposit
+
+| Column | Logical Name | Type | Notes |
+|---|---|---|---|
+| Deposit Name | `krbork_name` | Single line of text | Auto-generated label |
+| Amount | `krbork_amount` | Decimal | Deposit amount |
+| Date | `krbork_date` | Date Only | Date of deposit |
+| Savings Goal | `krbork_SavingsGoalId` | Lookup → `krbork_savingsgoal` | Parent goal (cascade delete) |
+
+### Relationship
+
+`krbork_savingsgoal` → `krbork_deposit` is a **one-to-many** relationship with **cascade delete** — deleting a goal removes all its deposits automatically.
+
+### Generated Services
+
+Running `pac code add-data-source -a dataverse -t <table>` generates:
+
+```
+src/generated/
+  models/
+    Krbork_savingsgoalModel.ts
+    Krbork_depositModel.ts
+  services/
+    Krbork_savingsgoalsService.ts
+    Krbork_depositsService.ts
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Usage example:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```typescript
+import { Krbork_savingsgoalsService } from './generated/services/Krbork_savingsgoalsService';
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+const result = await Krbork_savingsgoalsService.getAll({
+  select: ['krbork_name', 'krbork_targetamount', 'krbork_deadline'],
+  orderBy: ['krbork_name asc'],
+});
+const goals = result.data ?? [];
 ```
+
+---
+
+## Power Apps Code App
+
+A **Power Apps Code App** is a React web application packaged and hosted inside Power Platform. It gets full access to the Power Apps runtime, connectors, and Dataverse — while being authored entirely in standard React/TypeScript.
+
+### Cost
+
+Code Apps run inside Power Apps and are subject to standard **Power Apps licensing**:
+
+- **Power Apps Premium** licence required per user (includes Dataverse access)
+- No additional per-app fee beyond the licence
+- Dataverse storage is pooled — 10 GB base + 2 GB per Premium licence
+- See [Power Apps pricing](https://powerapps.microsoft.com/en-us/pricing/) for current rates
+
+### Plugins / Tools Used to Build
+
+| Tool | Purpose |
+|---|---|
+| [GitHub Copilot CLI](https://githubnext.com/projects/copilot-cli) | AI-assisted development — layout, logic, CSS, Dataverse wiring |
+| `@microsoft/power-apps-cli` (`pac`) | Scaffolding, data source generation, deployment (`power-apps push`) |
+| `@vitejs/plugin-react` | React Fast Refresh in Vite dev server |
+| Power Apps Code App SDK (`@microsoft/powerapps-component-framework`) | Runtime bridge between the web app and Power Platform |
+| Azure CLI (`az`) | Dataverse API authentication token acquisition |
+
+---
+
+## Local Development
+
+```bash
+npm install
+npm run dev
+```
+
+### Deploy to Power Apps
+
+```bash
+# Authenticate (first time or after token expiry)
+az login --tenant <tenant-id> --allow-no-subscriptions --use-device-code
+
+# Build + push
+npx --prefix . power-apps push --non-interactive
+```
+
+### Environment
+
+| Setting | Value |
+|---|---|
+| Environment ID | `a922759f-9738-e669-bf1b-cee5d042d90d` |
+| Dataverse URL | `https://orgaf6150b9.crm.dynamics.com` |
+| Solution | `SavingTrackerSolution` |
+| Publisher prefix | `krbork_` |
+

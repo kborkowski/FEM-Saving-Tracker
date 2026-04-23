@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useGoals } from '../context/GoalsContext';
 import { filterGoals, sortGoals } from '../utils';
 import GoalCard from './GoalCard';
-import type { FilterType, SortType, Goal } from '../types';
+import type { FilterType, SortType } from '../types';
 import iconFilter from '../assets/images/icon-filter.svg';
 import iconSort from '../assets/images/icon-sort.svg';
 import iconTarget from '../assets/images/icon-target.svg';
@@ -22,42 +22,14 @@ const SORT_OPTIONS: { value: SortType; label: string }[] = [
   { value: 'alphabetical', label: 'Alphabetical' },
 ];
 
-const DESKTOP_SOURCE_MAP = [0, 1, 2, 3, 7, 4, 5, 6];
-
-const DESKTOP_PLACEMENT = [
-  { gridColumn: '1 / span 2', gridRow: '1' },
-  { gridColumn: '3',           gridRow: '1 / span 2' },
-  { gridColumn: '1',           gridRow: '2' },
-  { gridColumn: '2',           gridRow: '2' },
-  { gridColumn: '1',           gridRow: '3 / span 2' },
-  { gridColumn: '2 / span 2', gridRow: '3' },
-  { gridColumn: '2',           gridRow: '4' },
-  { gridColumn: '3',           gridRow: '4' },
-];
-
-function getDesktopItems(goals: Goal[]) {
-  const items: { goal: Goal; vi: number; groupIndex: number }[] = [];
-  const totalGroups = Math.ceil(goals.length / 8);
-  for (let g = 0; g < totalGroups; g++) {
-    for (let vi = 0; vi < 8; vi++) {
-      const srcOffset = DESKTOP_SOURCE_MAP[vi];
-      const srcIdx = g * 8 + srcOffset;
-      if (srcIdx < goals.length) {
-        items.push({ goal: goals[srcIdx], vi, groupIndex: g });
-      }
-    }
-  }
-  return items;
-}
-
-function getDesktopStyle(vi: number, groupIndex: number): React.CSSProperties {
-  const p = DESKTOP_PLACEMENT[vi];
-  const rowOffset = groupIndex * 4;
-  const adjustRow = (r: string) => r.replace(/(\d+)/g, m => String(parseInt(m) + rowOffset));
-  return {
-    gridColumn: p.gridColumn,
-    gridRow: adjustRow(p.gridRow),
-  };
+// Span rules by position within each group of 8
+// pos 0 → wide (span 2 cols), pos 1 → tall (span 2 rows)
+// pos 4 → tall (span 2 rows), pos 5 → wide (span 2 cols)
+function desktopCardStyle(posInGroup: number): React.CSSProperties {
+  const style: React.CSSProperties = {};
+  if (posInGroup === 0 || posInGroup === 5) style.gridColumn = 'span 2';
+  if (posInGroup === 1 || posInGroup === 4) style.gridRow = 'span 2';
+  return style;
 }
 
 export default function GoalGrid() {
@@ -81,9 +53,6 @@ export default function GoalGrid() {
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
-
-  const desktopItems = getDesktopItems(sorted);
-  const totalRows = Math.ceil(sorted.length / 8) * 4;
 
   return (
     <section className="goal-grid-section">
@@ -167,22 +136,16 @@ export default function GoalGrid() {
         </div>
       ) : (
         <>
-          <div
-            className="goal-grid goal-grid--desktop"
-            style={{ gridTemplateRows: `repeat(${totalRows}, 240px)` }}
-          >
-            {desktopItems.map(({ goal, vi, groupIndex }) => {
-              const isCompleted = goal.deposits.reduce((s, d) => s + d.amount, 0) >= goal.target;
-              const isFeatured = (vi === 0 || vi === 5) && !isCompleted;
-              const isTall = vi === 1 || vi === 4;
-              const style = getDesktopStyle(vi, groupIndex);
+          <div className="goal-grid goal-grid--desktop">
+            {sorted.map((goal, i) => {
+              const posInGroup = i % 8;
+              const isTall = posInGroup === 1 || posInGroup === 4;
               return (
                 <GoalCard
-                  key={`desktop-${goal.id}-${groupIndex}`}
+                  key={`desktop-${goal.id}`}
                   goal={goal}
-                  featured={isFeatured}
                   tall={isTall}
-                  style={style}
+                  style={desktopCardStyle(posInGroup)}
                 />
               );
             })}
@@ -191,14 +154,11 @@ export default function GoalGrid() {
           <div className="goal-grid goal-grid--mobile">
             {sorted.map((goal, i) => {
               const posInGroup = i % 8;
-              const isCompleted = goal.deposits.reduce((s, d) => s + d.amount, 0) >= goal.target;
-              const isFeatured = (posInGroup === 0 || posInGroup === 4) && !isCompleted;
               const isTabletWide = posInGroup === 0 || posInGroup === 3 || posInGroup === 4 || posInGroup === 7;
               return (
                 <GoalCard
                   key={`mobile-${goal.id}`}
                   goal={goal}
-                  featured={isFeatured}
                   tabletWide={isTabletWide}
                 />
               );

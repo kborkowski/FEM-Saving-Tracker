@@ -30,7 +30,6 @@ export function loadFonts(): void {
       .then(([interLoaded, bricolageLoaded]) => {
         document.fonts.add(interLoaded);
         document.fonts.add(bricolageLoaded);
-        console.log('[Fonts] Inter + Bricolage Grotesque loaded ✓');
       })
       .catch((err) => {
         console.error('[Fonts] Failed to load via blob URL:', err);
@@ -61,5 +60,4 @@ function injectFontFaceDataUri(interB64: string, _family: string, _weight: strin
     }
   `;
   document.head.appendChild(style);
-  console.log('[Fonts] Injected @font-face data: URI as fallback');
 }

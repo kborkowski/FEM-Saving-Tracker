@@ -5,6 +5,7 @@ import iconChevronLeft from '../assets/images/icon-chevron-left.svg';
 import iconCheckmark from '../assets/images/icon-checkmark.svg';
 import iconArrowDown from '../assets/images/icon-arrow-down.svg';
 import iconError from '../assets/images/icon-error.svg';
+import iconDollar from '../assets/images/icon-dollar.svg';
 
 interface GoalDetailProps {
   goalId: string;
@@ -170,7 +171,7 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
               </div>
               <div className="progress-bar-section">
                 <div className="progress-track">
-                  <div className="progress-fill" style={{ width: `${pct}%` }} />
+                  {pct > 0 && <div className="progress-fill" style={{ width: `${pct}%` }} />}
                 </div>
                 <div className="progress-summary">
                   <div className="progress-amount-info">
@@ -192,13 +193,13 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
                 <div className="deposit-form-field">
                   <label className="deposit-form-label" htmlFor="deposit-amount">Amount</label>
                   <div className="deposit-input-wrapper">
-                    <span className="deposit-input-prefix">$</span>
+                    <img src={iconDollar} className="deposit-input-icon" alt="" />
                     <input
                       id="deposit-amount"
                       type="number"
                       min="0.01"
                       step="0.01"
-                      className={`deposit-text-input deposit-text-input--prefixed${depositError ? ' deposit-text-input--error' : ''}`}
+                      className={`deposit-text-input deposit-text-input--icon${depositError ? ' deposit-text-input--error' : ''}`}
                       placeholder="0.00"
                       value={depositAmount}
                       onChange={e => { setDepositAmount(e.target.value); setDepositError(''); }}

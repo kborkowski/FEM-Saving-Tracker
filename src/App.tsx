@@ -9,18 +9,29 @@ import DeleteModal from './components/modals/DeleteModal';
 import DepositModal from './components/modals/DepositModal';
 
 function AppContent() {
-  const { state } = useGoals();
+  const { state, loading, error } = useGoals();
   return (
     <div className="app">
       <Header />
-      {state.selectedGoalId ? (
+      {loading && (
+        <div className="data-loading">
+          <div className="data-loading__spinner" />
+          <p>Loading your savings data…</p>
+        </div>
+      )}
+      {error && !loading && (
+        <div className="data-error">{error}</div>
+      )}
+      {!loading && !error && state.selectedGoalId ? (
         <GoalDetail goalId={state.selectedGoalId} />
       ) : (
+        !loading && !error && (
         <main className="dashboard">
           <StatsBar />
           <MonthlyChart />
           <GoalGrid />
         </main>
+        )
       )}
       {state.modal && (
         <>

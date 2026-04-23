@@ -10,5 +10,21 @@
   "localAppUrl": "http://localhost:3000",
   "logoPath": "Default",
   "connectionReferences": {},
-  "databaseReferences": {}
+  "databaseReferences": {
+    "default.cds": {
+      "dataSources": {
+        "savingsgoals": {
+          "entitySetName": "krbork_savingsgoals",
+          "logicalName": "krbork_savingsgoal",
+          "isHidden": false
+        },
+        "deposits": {
+          "entitySetName": "krbork_deposits",
+          "logicalName": "krbork_deposit",
+          "isHidden": false
+        }
+      },
+      "environmentVariableName": ""
+    }
+  }
 }

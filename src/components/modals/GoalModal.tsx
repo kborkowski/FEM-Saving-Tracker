@@ -3,6 +3,8 @@ import Modal from './Modal';
 import { useGoals, useGoalById } from '../../context/GoalsContext';
 import { generateId } from '../../utils';
 import iconError from '../../assets/images/icon-error.svg';
+import iconDollar from '../../assets/images/icon-dollar.svg';
+import iconCalendar from '../../assets/images/icon-calendar.svg';
 
 interface GoalModalProps {
   goalId?: string;
@@ -16,6 +18,7 @@ export default function GoalModal({ goalId }: GoalModalProps) {
   const [name, setName] = useState(existing?.name ?? '');
   const [target, setTarget] = useState(existing?.target?.toString() ?? '');
   const [deadline, setDeadline] = useState(existing?.deadline ?? '');
+  const [deadlineFocused, setDeadlineFocused] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; target?: string }>({});
 
   const handleClose = () => dispatch({ type: 'CLOSE_MODAL' });
@@ -73,10 +76,10 @@ export default function GoalModal({ goalId }: GoalModalProps) {
       <div className="form-group">
         <label className="form-label" htmlFor="goal-target">Target Amount</label>
         <div className="form-input-wrapper">
-          <span className="form-input-prefix">$</span>
+          <img src={iconDollar} className="form-input-icon" alt="" />
           <input
             id="goal-target"
-            className={`form-input has-prefix${errors.target ? ' error' : ''}`}
+            className={`form-input has-icon${errors.target ? ' error' : ''}`}
             type="number"
             min="0.01"
             step="0.01"
@@ -94,13 +97,19 @@ export default function GoalModal({ goalId }: GoalModalProps) {
       </div>
       <div className="form-group">
         <label className="form-label" htmlFor="goal-deadline">Deadline (optional)</label>
-        <input
-          id="goal-deadline"
-          className="form-input"
-          type="date"
-          value={deadline ?? ''}
-          onChange={e => setDeadline(e.target.value)}
-        />
+        <div className="form-input-wrapper">
+          <img src={iconCalendar} className="form-input-icon" alt="" />
+          <input
+            id="goal-deadline"
+            className="form-input has-icon deadline-input"
+            type={deadline || deadlineFocused ? 'date' : 'text'}
+            value={deadline ?? ''}
+            placeholder="Select a date"
+            onChange={e => setDeadline(e.target.value)}
+            onFocus={() => setDeadlineFocused(true)}
+            onBlur={() => setDeadlineFocused(false)}
+          />
+        </div>
       </div>
       <div className="modal-actions">
         <button className="btn btn-secondary" onClick={handleClose}>Cancel</button>
