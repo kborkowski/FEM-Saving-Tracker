@@ -58,7 +58,7 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
   const depositPanel = (
     <div className="goal-deposit-panel">
       <div className="deposit-panel-header">
-        <span className="deposit-panel-title">Deposit History</span>
+        <span className="deposit-panel-title">Deposit history</span>
         <span className="deposit-panel-count">{sortedDeposits.length} deposits</span>
       </div>
       <div className="deposit-panel-items">
@@ -123,7 +123,7 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
         {goal.deadline && (
           <>
             <span>Due {formatDate(goal.deadline)}</span>
-            <span aria-hidden="true">·</span>
+            <span aria-hidden="true">•</span>
           </>
         )}
         <span>Created {formatDate(goal.createdAt)}</span>
@@ -137,21 +137,22 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
               <img src={iconCheckmark} alt="Complete" />
             </div>
             <div className="goal-hero-summary">
-              <div className="goal-hero-amount">{formatCurrency(totalSaved)}</div>
+              <div className="goal-hero-amount">{formatCurrency(totalSaved, true)}</div>
               <div className="goal-hero-status">
-                <div className="goal-hero-title">Goal Complete!</div>
+                <div className="goal-hero-title">100% Goal Complete</div>
                 <div className="goal-hero-subtitle">
-                  You reached your savings goal of {formatCurrency(goal.target)}
+                  You saved {formatCurrency(totalSaved, true)} across {goal.deposits.length} deposit{goal.deposits.length !== 1 ? 's' : ''}.
+                  {goal.deadline && ` Finished before your ${formatDate(goal.deadline)} deadline.`}
                 </div>
                 <div className="goal-hero-stats">
                   <div className="goal-hero-stat">
                     <div className="goal-hero-stat-value">{goal.deposits.length}</div>
-                    <div className="goal-hero-stat-label">deposits</div>
+                    <div className="goal-hero-stat-label">DEPOSITS</div>
                   </div>
                   <div className="goal-hero-divider" />
                   <div className="goal-hero-stat">
-                    <div className="goal-hero-stat-value">{formatCurrency(totalSaved)}</div>
-                    <div className="goal-hero-stat-label">Total saved</div>
+                    <div className="goal-hero-stat-value">{formatCurrency(totalSaved, true)}</div>
+                    <div className="goal-hero-stat-label">TOTAL SAVED</div>
                   </div>
                 </div>
               </div>
