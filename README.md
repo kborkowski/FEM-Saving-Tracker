@@ -130,10 +130,12 @@ npx --prefix . power-apps push --non-interactive
 
 ### Environment
 
-| Setting | Value |
+Copy `power.config.example.json` to `power.config.json` and fill in your own values:
+
+| Setting | Description |
 |---|---|
-| Environment ID | `a922759f-9738-e669-bf1b-cee5d042d90d` |
-| Dataverse URL | `https://orgaf6150b9.crm.dynamics.com` |
+| Environment ID | Your Power Apps environment GUID |
+| Dataverse URL | `https://<your-org>.crm.dynamics.com` |
 | Solution | `SavingTrackerSolution` |
 | Publisher prefix | `krbork_` |
 

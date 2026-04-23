@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "appId": "916dfee5-06be-4f36-a888-8ab7445da52e",
+  "appId": "<YOUR_APP_ID>",
   "appDisplayName": "Savings Tracker",
   "region": "prod",
-  "environmentId": "a922759f-9738-e669-bf1b-cee5d042d90d",
+  "environmentId": "<YOUR_ENVIRONMENT_ID>",
   "description": " ",
   "buildPath": "./dist",
   "buildEntryPoint": "index.html",

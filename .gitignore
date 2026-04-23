@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Power Apps deployment config (contains environment/app IDs — do not commit)
+power.config.json
+memory-bank.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
