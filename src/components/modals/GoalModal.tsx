@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Modal from './Modal';
 import { useGoals, useGoalById } from '../../context/GoalsContext';
 import { generateId } from '../../utils';
@@ -19,6 +19,8 @@ export default function GoalModal({ goalId }: GoalModalProps) {
   const [target, setTarget] = useState(existing?.target?.toString() ?? '');
   const [deadline, setDeadline] = useState(existing?.deadline ?? '');
   const [errors, setErrors] = useState<{ name?: string; target?: string }>({});
+  const nameRef = useRef<HTMLInputElement>(null);
+  const targetRef = useRef<HTMLInputElement>(null);
 
   const handleClose = () => dispatch({ type: 'CLOSE_MODAL' });
 
@@ -29,6 +31,11 @@ export default function GoalModal({ goalId }: GoalModalProps) {
     if (!target || isNaN(targetNum) || targetNum <= 0) newErrors.target = 'Target amount must be greater than 0.';
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      // Focus first errored field so keyboard users land there, not on Close
+      setTimeout(() => {
+        if (newErrors.name) nameRef.current?.focus();
+        else if (newErrors.target) targetRef.current?.focus();
+      }, 0);
       return;
     }
 
@@ -59,6 +66,7 @@ export default function GoalModal({ goalId }: GoalModalProps) {
         <label className="form-label" htmlFor="goal-name">Goal Name</label>
         <input
           id="goal-name"
+          ref={nameRef}
           className={`form-input${errors.name ? ' error' : ''}`}
           type="text"
           value={name}
@@ -78,6 +86,7 @@ export default function GoalModal({ goalId }: GoalModalProps) {
           <img src={iconDollar} className="form-input-icon" alt="" />
           <input
             id="goal-target"
+            ref={targetRef}
             className={`form-input has-icon${errors.target ? ' error' : ''}`}
             type="number"
             min="0.01"
