@@ -39,22 +39,34 @@ The app uses two custom Dataverse tables in the **Saving Tracker Solution** (`Sa
 
 | Column | Logical Name | Type | Notes |
 |---|---|---|---|
-| Goal Name | `krbork_name` | Single line of text | Primary column |
-| Target Amount | `krbork_targetamount` | Decimal | Target savings amount |
-| Deadline | `krbork_deadline` | Date Only | Optional deadline |
+| Goal Name | `krbork_name` | Single line of text | Primary column; displayed as card title |
+| Target Amount | `krbork_targetamount` | Currency (Decimal) | Savings target; used to compute progress % |
+| Deadline | `krbork_deadline` | Date Only | Optional; shown in card meta row |
+| Created On | `createdon` / `overriddencreatedon` | Date/Time | Used for sort-by-date; overridden when seeding |
+
+**Fields read by the app:** `krbork_savingsgoalid`, `krbork_name`, `krbork_targetamount`, `krbork_deadline`, `createdon`
 
 ### `krbork_deposit` — Deposit
 
 | Column | Logical Name | Type | Notes |
 |---|---|---|---|
-| Deposit Name | `krbork_name` | Single line of text | Auto-generated label |
-| Amount | `krbork_amount` | Decimal | Deposit amount |
-| Date | `krbork_date` | Date Only | Date of deposit |
-| Savings Goal | `krbork_SavingsGoalId` | Lookup → `krbork_savingsgoal` | Parent goal (cascade delete) |
+| Deposit Label | `krbork_name` | Single line of text | Auto-set to `"Deposit"` or user-provided note |
+| Amount | `krbork_amount` | Currency (Decimal) | Deposit value; summed to compute total saved |
+| Deposit Date | `krbork_depositdate` | Date Only | Displayed in history list and monthly chart |
+| Savings Goal | `krbork_SavingsGoalId` | Lookup → `krbork_savingsgoal` | Parent goal; read back as `_krbork_savingsgoalid_value` |
+
+**Fields read by the app:** `krbork_depositid`, `krbork_name`, `krbork_amount`, `krbork_depositdate`, `_krbork_savingsgoalid_value`, `createdon`
 
 ### Relationship
 
 `krbork_savingsgoal` → `krbork_deposit` is a **one-to-many** relationship with **cascade delete** — deleting a goal removes all its deposits automatically.
+
+### How the app uses Dataverse
+
+- On load, goals and deposits are fetched in parallel via `getAll()` and joined client-side by `_krbork_savingsgoalid_value`
+- Progress % is computed in the browser: `sum(deposits.amount) / goal.targetamount`
+- Card colour (grey / orange gradient / green) is derived from progress % — not stored in Dataverse
+- CRUD operations go through the generated services; state is updated locally after each successful API call
 
 ### Generated Services
 
@@ -63,23 +75,29 @@ Running `pac code add-data-source -a dataverse -t <table>` generates:
 ```
 src/generated/
   models/
-    Krbork_savingsgoalModel.ts
-    Krbork_depositModel.ts
+    Krbork_savingsgoalsModel.ts   ← Krbork_savingsgoalsBase + Krbork_savingsgoals interfaces
+    Krbork_depositsModel.ts       ← Krbork_depositsBase + Krbork_deposits interfaces
+    CommonModels.ts
   services/
-    Krbork_savingsgoalsService.ts
-    Krbork_depositsService.ts
+    Krbork_savingsgoalsService.ts ← getAll / get / create / update / delete
+    Krbork_depositsService.ts     ← getAll / get / create / update / delete
 ```
 
 Usage example:
 
 ```typescript
 import { Krbork_savingsgoalsService } from './generated/services/Krbork_savingsgoalsService';
+import { Krbork_depositsService } from './generated/services/Krbork_depositsService';
 
-const result = await Krbork_savingsgoalsService.getAll({
-  select: ['krbork_name', 'krbork_targetamount', 'krbork_deadline'],
-  orderBy: ['krbork_name asc'],
+// Fetch all goals
+const goalsResult = await Krbork_savingsgoalsService.getAll({
+  select: ['krbork_savingsgoalid', 'krbork_name', 'krbork_targetamount', 'krbork_deadline', 'createdon'],
 });
-const goals = result.data ?? [];
+
+// Fetch all deposits (client-side join via _krbork_savingsgoalid_value)
+const depositsResult = await Krbork_depositsService.getAll({
+  select: ['krbork_depositid', 'krbork_name', 'krbork_amount', 'krbork_depositdate', '_krbork_savingsgoalid_value', 'createdon'],
+});
 ```
 
 ---
