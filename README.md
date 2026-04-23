@@ -2,8 +2,7 @@
 
 A personal savings goal tracker built as a [Power Apps Code App](https://learn.microsoft.com/en-us/power-apps/maker/canvas-apps/code-components-overview) using **React + TypeScript + Vite**, backed by **Microsoft Dataverse**.
 
-> Frontend Mentor challenge design: [Savings Tracker](https://www.frontendmentor.io/)  
-> Figma file: [savings-tracker](https://www.figma.com/design/ngHoDLhrNqmYi7K580gCDf/savings-tracker)
+> Frontend Mentor challenge design: [Savings Tracker](https://www.frontendmentor.io/)
 
 ---
 
