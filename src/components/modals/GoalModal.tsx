@@ -117,8 +117,8 @@ export default function GoalModal({ goalId }: GoalModalProps) {
         </div>
       </div>
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={handleClose}>Cancel</button>
-        <button className="btn btn-primary" onClick={handleSubmit}>Save Goal</button>
+        <button type="button" className="btn btn-secondary" onClick={handleClose}>Cancel</button>
+        <button type="button" className="btn btn-primary" onClick={handleSubmit}>Save Goal</button>
       </div>
     </Modal>
   );

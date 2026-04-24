@@ -91,6 +91,7 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
       {/* Topbar */}
       <div className="goal-detail-topbar">
         <button
+          type="button"
           className="goal-detail-back"
           onClick={() => dispatch({ type: 'SELECT_GOAL', payload: null })}
         >
@@ -100,6 +101,7 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
         <div className="goal-detail-actions">
           {!isCompleted && (
             <button
+              type="button"
               className="detail-action-btn"
               onClick={() => dispatch({ type: 'OPEN_MODAL', payload: { type: 'edit-goal', goalId: goal.id } })}
             >
@@ -107,6 +109,7 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
             </button>
           )}
           <button
+            type="button"
             className="detail-action-btn detail-action-btn--danger"
             onClick={() => dispatch({ type: 'OPEN_MODAL', payload: { type: 'delete-goal', goalId: goal.id } })}
           >
@@ -116,7 +119,7 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
       </div>
 
       {/* Title */}
-      <h1 className="goal-detail-name">{goal.name}</h1>
+      <h2 className="goal-detail-name">{goal.name}</h2>
 
       {/* Date info */}
       <div className="goal-detail-dates">

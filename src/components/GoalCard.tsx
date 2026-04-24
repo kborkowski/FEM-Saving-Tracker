@@ -33,13 +33,11 @@ export default function GoalCard({ goal, tall, tabletWide, style }: GoalCardProp
   ].filter(Boolean).join(' ');
 
   return (
-    <div
+    <button
+      type="button"
       className={classes}
       style={style}
       onClick={() => dispatch({ type: 'SELECT_GOAL', payload: goal.id })}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && dispatch({ type: 'SELECT_GOAL', payload: goal.id })}
       aria-label={`${goal.name}, ${pct}% saved`}
     >
       <img src={patternGrid} className="goal-card__pattern" aria-hidden="true" alt="" />
@@ -62,6 +60,6 @@ export default function GoalCard({ goal, tall, tabletWide, style }: GoalCardProp
           <span className="goal-card__meta-date">{goal.deadline ? `Due ${formatDate(goal.deadline)}` : 'No deadline'}</span>
         </div>
       </div>
-    </div>
+    </button>
   );
 }

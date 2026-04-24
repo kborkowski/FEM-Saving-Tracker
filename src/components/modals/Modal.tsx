@@ -88,7 +88,7 @@ export default function Modal({ children, title, onClose }: ModalProps) {
       >
         <div className="modal-header">
           <h2 className="modal-title" id={titleId}>{title}</h2>
-          <button className="modal-close" onClick={onClose} aria-label="Close">
+          <button type="button" className="modal-close" onClick={onClose} aria-label="Close">
             <img src={iconCross} alt="" />
           </button>
         </div>

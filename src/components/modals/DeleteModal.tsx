@@ -25,8 +25,8 @@ export default function DeleteModal({ goalId }: DeleteModalProps) {
         </p>
       </div>
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={handleClose}>Cancel</button>
-        <button className="btn btn-danger" onClick={handleDelete}>Delete Goal</button>
+        <button type="button" className="btn btn-secondary" onClick={handleClose}>Cancel</button>
+        <button type="button" className="btn btn-danger" onClick={handleDelete}>Delete Goal</button>
       </div>
     </Modal>
   );

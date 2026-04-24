@@ -89,6 +89,7 @@ function Dropdown<T extends string>({ options, value, isOpen, label, icon, onTog
     <div className="pill-dropdown">
       <button
         ref={triggerRef}
+        type="button"
         className="pill-btn"
         onClick={onToggle}
         onKeyDown={handleTriggerKeyDown}
@@ -185,6 +186,7 @@ export default function GoalGrid() {
           <img src={iconTarget} alt="" />
           <p>No goals yet. Add your first savings goal to get started.</p>
           <button
+            type="button"
             className="btn-pill"
             onClick={() => dispatch({ type: 'OPEN_MODAL', payload: { type: 'create-goal' } })}
           >

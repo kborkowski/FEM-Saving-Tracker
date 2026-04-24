@@ -74,8 +74,8 @@ export default function DepositModal({ goalId }: DepositModalProps) {
         />
       </div>
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={handleClose}>Cancel</button>
-        <button className="btn btn-primary" onClick={handleSubmit}>Add Deposit</button>
+        <button type="button" className="btn btn-secondary" onClick={handleClose}>Cancel</button>
+        <button type="button" className="btn btn-primary" onClick={handleSubmit}>Add Deposit</button>
       </div>
     </Modal>
   );

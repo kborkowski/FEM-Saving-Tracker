@@ -12,6 +12,7 @@ export default function Header() {
           <span className="header-logo-text">Savings Tracker</span>
         </div>
         <button
+          type="button"
           className="btn-pill"
           onClick={() => dispatch({ type: 'OPEN_MODAL', payload: { type: 'create-goal' } })}
         >
