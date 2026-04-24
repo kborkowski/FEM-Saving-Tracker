@@ -11,3 +11,13 @@
 .stat-value--zero{color:#B7B7B7}.modal-body{display:flex;flex-direction:column;gap:12px}.modal-divider{height:1px;background:var(--color-surface-elevated);margin:0}.deposit-form-error{display:flex;flex-direction:row;align-items:center;gap:8px;color:var(--color-error);font-size:0.875rem;font-weight:500;line-height:140%;letter-spacing:-.3px}.data-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:80px 24px;color:var(--color-text-secondary)}.data-loading__spinner{width:40px;height:40px;border:3px solid var(--color-surface-elevated);border-top-color:var(--color-accent);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.data-error{margin:24px auto;max-width:480px;padding:16px 20px;background:rgba(255,87,34,.12);border:1px solid rgba(255,87,34,.4);border-radius:8px;color:var(--color-text-primary);font-size:0.875rem;text-align:center}
 .deadline-input::placeholder{color:#B7B7B7}.deadline-input.deadline-empty{color:#B7B7B7}
 .goal-card--completed .goal-card__meta{color:var(--color-text-primary)}
+
+@supports (anchor-name: --test) {
+  .pill-dropdown{position:static}
+  .pill-dropdown-list{position:fixed;top:anchor(bottom);right:anchor(right);margin-top:8px;width:280px}
+}
+@media (max-width:699px) {
+  @supports (anchor-name: --test) {
+    .pill-dropdown-list{left:0;right:0;width:auto}
+  }
+}

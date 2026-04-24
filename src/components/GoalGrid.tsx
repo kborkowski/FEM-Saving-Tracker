@@ -38,12 +38,14 @@ interface DropdownProps<T extends string> {
   isOpen: boolean;
   label: string;
   icon: string;
+  anchorName: string;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   onToggle: () => void;
   onClose: () => void;
   onSelect: (value: T) => void;
 }
 
-function Dropdown<T extends string>({ options, value, isOpen, label, icon, onToggle, onClose, onSelect }: DropdownProps<T>) {
+function Dropdown<T extends string>({ options, value, isOpen, label, icon, anchorName, containerRef, onToggle, onClose, onSelect }: DropdownProps<T>) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
@@ -86,11 +88,12 @@ function Dropdown<T extends string>({ options, value, isOpen, label, icon, onTog
   };
 
   return (
-    <div className="pill-dropdown">
+    <div className="pill-dropdown" ref={containerRef}>
       <button
         ref={triggerRef}
         type="button"
         className="pill-btn"
+        style={{ anchorName: `--${anchorName}` } as React.CSSProperties}
         onClick={onToggle}
         onKeyDown={handleTriggerKeyDown}
         aria-expanded={isOpen}
@@ -100,7 +103,12 @@ function Dropdown<T extends string>({ options, value, isOpen, label, icon, onTog
         {label}
       </button>
       {isOpen && (
-        <ul className="pill-dropdown-list" role="listbox" ref={listRef}>
+        <ul
+          className="pill-dropdown-list"
+          role="listbox"
+          ref={listRef}
+          style={{ positionAnchor: `--${anchorName}` } as React.CSSProperties}
+        >
           <li className="pill-dropdown-label" aria-hidden="true">{label}</li>
           {options.map((opt, index) => {
             const isActive = value === opt.value;
@@ -153,31 +161,31 @@ export default function GoalGrid() {
       <div className="goal-grid-header">
         <h2 className="goal-grid-title">Your goals</h2>
         <div className="goal-grid-controls">
-          <div ref={filterRef}>
-            <Dropdown
-              options={FILTER_OPTIONS}
-              value={state.filter}
-              isOpen={filterOpen}
-              label={state.filter === 'all' ? 'Filters' : currentFilterLabel}
-              icon={iconFilter}
-              onToggle={() => { setFilterOpen(v => !v); setSortOpen(false); }}
-              onClose={() => setFilterOpen(false)}
-              onSelect={(v) => { dispatch({ type: 'SET_FILTER', payload: v }); setFilterOpen(false); }}
-            />
-          </div>
+          <Dropdown
+            options={FILTER_OPTIONS}
+            value={state.filter}
+            isOpen={filterOpen}
+            label={state.filter === 'all' ? 'Filters' : currentFilterLabel}
+            icon={iconFilter}
+            anchorName="filter-dropdown"
+            containerRef={filterRef}
+            onToggle={() => { setFilterOpen(v => !v); setSortOpen(false); }}
+            onClose={() => setFilterOpen(false)}
+            onSelect={(v) => { dispatch({ type: 'SET_FILTER', payload: v }); setFilterOpen(false); }}
+          />
 
-          <div ref={sortRef}>
-            <Dropdown
-              options={SORT_OPTIONS}
-              value={state.sort}
-              isOpen={sortOpen}
-              label={state.sort === 'recently-added' ? 'Sort by' : currentSortLabel}
-              icon={iconSort}
-              onToggle={() => { setSortOpen(v => !v); setFilterOpen(false); }}
-              onClose={() => setSortOpen(false)}
-              onSelect={(v) => { dispatch({ type: 'SET_SORT', payload: v }); setSortOpen(false); }}
-            />
-          </div>
+          <Dropdown
+            options={SORT_OPTIONS}
+            value={state.sort}
+            isOpen={sortOpen}
+            label={state.sort === 'recently-added' ? 'Sort by' : currentSortLabel}
+            icon={iconSort}
+            anchorName="sort-dropdown"
+            containerRef={sortRef}
+            onToggle={() => { setSortOpen(v => !v); setFilterOpen(false); }}
+            onClose={() => setSortOpen(false)}
+            onSelect={(v) => { dispatch({ type: 'SET_SORT', payload: v }); setSortOpen(false); }}
+          />
         </div>
       </div>
 
