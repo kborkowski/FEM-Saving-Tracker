@@ -18,6 +18,6 @@
 }
 @media (max-width:699px) {
   @supports (anchor-name: --test) {
-    .pill-dropdown-list{left:0;right:0;width:auto}
+    .pill-dropdown-list{left:0;right:0;width:auto;padding-left:1rem;padding-right:1rem}
   }
 }
