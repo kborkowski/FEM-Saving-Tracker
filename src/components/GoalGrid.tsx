@@ -191,14 +191,17 @@ export default function GoalGrid() {
 
       {sorted.length === 0 ? (
         <div className="empty-state">
-          <img src={iconTarget} alt="" />
-          <p>No goals yet. Add your first savings goal to get started.</p>
+          <div className="empty-state__inner">
+            <img src={iconTarget} alt="" />
+            <h3 className="empty-state__title">No goals yet</h3>
+            <p className="empty-state__subtitle">Start saving for something that matters. Create your first goal and track your progress.</p>
+          </div>
           <button
             type="button"
-            className="btn-pill"
+            className="empty-state__btn"
             onClick={() => dispatch({ type: 'OPEN_MODAL', payload: { type: 'create-goal' } })}
           >
-            + Add Goal
+            + Create your first goal
           </button>
         </div>
       ) : (
