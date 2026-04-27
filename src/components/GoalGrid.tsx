@@ -40,12 +40,13 @@ interface DropdownProps<T extends string> {
   icon: string;
   anchorName: string;
   containerRef: React.RefObject<HTMLDivElement | null>;
+  disabled?: boolean;
   onToggle: () => void;
   onClose: () => void;
   onSelect: (value: T) => void;
 }
 
-function Dropdown<T extends string>({ options, value, isOpen, label, icon, anchorName, containerRef, onToggle, onClose, onSelect }: DropdownProps<T>) {
+function Dropdown<T extends string>({ options, value, isOpen, label, icon, anchorName, containerRef, disabled, onToggle, onClose, onSelect }: DropdownProps<T>) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
@@ -98,6 +99,7 @@ function Dropdown<T extends string>({ options, value, isOpen, label, icon, ancho
         onKeyDown={handleTriggerKeyDown}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
+        disabled={disabled}
       >
         <img src={icon} alt="" />
         {label}
@@ -142,6 +144,7 @@ export default function GoalGrid() {
 
   const filtered = filterGoals(state.goals, state.filter);
   const sorted = sortGoals(filtered, state.sort);
+  const noGoals = state.goals.length === 0;
 
   const currentFilterLabel = FILTER_OPTIONS.find(o => o.value === state.filter)?.label ?? 'Filters';
   const currentSortLabel = SORT_OPTIONS.find(o => o.value === state.sort)?.label ?? 'Sort by';
@@ -169,6 +172,7 @@ export default function GoalGrid() {
             icon={iconFilter}
             anchorName="filter-dropdown"
             containerRef={filterRef}
+            disabled={noGoals}
             onToggle={() => { setFilterOpen(v => !v); setSortOpen(false); }}
             onClose={() => setFilterOpen(false)}
             onSelect={(v) => { dispatch({ type: 'SET_FILTER', payload: v }); setFilterOpen(false); }}
@@ -182,6 +186,7 @@ export default function GoalGrid() {
             icon={iconSort}
             anchorName="sort-dropdown"
             containerRef={sortRef}
+            disabled={noGoals}
             onToggle={() => { setSortOpen(v => !v); setFilterOpen(false); }}
             onClose={() => setSortOpen(false)}
             onSelect={(v) => { dispatch({ type: 'SET_SORT', payload: v }); setSortOpen(false); }}
