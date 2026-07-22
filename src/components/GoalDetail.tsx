@@ -88,48 +88,50 @@ export default function GoalDetail({ goalId }: GoalDetailProps) {
 
   return (
     <div className="goal-detail">
-      {/* Topbar */}
-      <div className="goal-detail-topbar">
-        <button
-          type="button"
-          className="goal-detail-back"
-          onClick={() => dispatch({ type: 'SELECT_GOAL', payload: null })}
-        >
-          <img src={iconChevronLeft} alt="" />
-          Back
-        </button>
-        <div className="goal-detail-actions">
-          {!isCompleted && (
-            <button
-              type="button"
-              className="detail-action-btn"
-              onClick={() => dispatch({ type: 'OPEN_MODAL', payload: { type: 'edit-goal', goalId: goal.id } })}
-            >
-              Edit goal
-            </button>
-          )}
+      <div className="goal-detail-header">
+        {/* Topbar */}
+        <div className="goal-detail-topbar">
           <button
             type="button"
-            className="detail-action-btn detail-action-btn--danger"
-            onClick={() => dispatch({ type: 'OPEN_MODAL', payload: { type: 'delete-goal', goalId: goal.id } })}
+            className="goal-detail-back"
+            onClick={() => dispatch({ type: 'SELECT_GOAL', payload: null })}
           >
-            Delete goal
+            <img src={iconChevronLeft} alt="" />
+            Back
           </button>
+          <div className="goal-detail-actions">
+            {!isCompleted && (
+              <button
+                type="button"
+                className="detail-action-btn"
+                onClick={() => dispatch({ type: 'OPEN_MODAL', payload: { type: 'edit-goal', goalId: goal.id } })}
+              >
+                Edit goal
+              </button>
+            )}
+            <button
+              type="button"
+              className="detail-action-btn detail-action-btn--danger"
+              onClick={() => dispatch({ type: 'OPEN_MODAL', payload: { type: 'delete-goal', goalId: goal.id } })}
+            >
+              Delete goal
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Title */}
-      <h2 className="goal-detail-name">{goal.name}</h2>
+        {/* Title */}
+        <h2 className="goal-detail-name">{goal.name}</h2>
 
-      {/* Date info */}
-      <div className="goal-detail-dates">
-        {goal.deadline && (
-          <>
-            <span>Due {formatDate(goal.deadline)}</span>
-            <span aria-hidden="true">•</span>
-          </>
-        )}
-        <span>Created {formatDate(goal.createdAt)}</span>
+        {/* Date info */}
+        <div className="goal-detail-dates">
+          {goal.deadline && (
+            <>
+              <span>Due {formatDate(goal.deadline)}</span>
+              <span aria-hidden="true">•</span>
+            </>
+          )}
+          <span>Created {formatDate(goal.createdAt)}</span>
+        </div>
       </div>
 
       {isCompleted ? (

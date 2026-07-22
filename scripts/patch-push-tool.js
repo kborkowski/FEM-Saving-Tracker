@@ -46,16 +46,13 @@ console.log('Applying power-apps binary upload patches...');
 patch(
   join(root, 'node_modules/@microsoft/power-apps-cli/dist/FS/CliFs.js'),
   'CliFs.js — binary readFile',
-  `async readFile(path, encoding) {
-        return fs.readFile(path, encoding);
-    }`,
-  `async readFile(path, encoding) {
-        const binaryExts = ['.woff2', '.woff', '.ttf', '.otf', '.eot', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.webp'];
-        if (binaryExts.some(ext => path.endsWith(ext))) {
-            return fs.readFile(path); // return Buffer for binary files
-        }
-        return fs.readFile(path, encoding);
-    }`
+  `return await fs.promises.readFile(normalizedPath, encoding);`,
+  `const binaryExts = ['.woff2', '.woff', '.ttf', '.otf', '.eot', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.webp'];
+      const isBinary = binaryExts.some(ext => normalizedPath.toLowerCase().endsWith(ext));
+      if (isBinary) {
+        return await fs.promises.readFile(normalizedPath); // return Buffer for binary files
+      }
+      return await fs.promises.readFile(normalizedPath, encoding);`
 );
 
 // Patch 2: PushApp.js — remove forced 'utf-8' encoding on readFile

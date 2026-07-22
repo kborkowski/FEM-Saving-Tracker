@@ -1,23 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useGoals } from '../context/GoalsContext';
 import { getMonthlyTotals, formatCurrency } from '../utils';
 
-function useWindowWidth() {
-  const [width, setWidth] = useState(window.innerWidth);
+function useContainerWidth(ref: React.RefObject<HTMLDivElement | null>) {
+  const [width, setWidth] = useState(0);
   useEffect(() => {
-    const handler = () => setWidth(window.innerWidth);
-    window.addEventListener('resize', handler);
-    return () => window.removeEventListener('resize', handler);
-  }, []);
+    if (!ref.current) return;
+    const observer = new ResizeObserver(entries => {
+      setWidth(entries[0].contentRect.width);
+    });
+    observer.observe(ref.current);
+    setWidth(ref.current.getBoundingClientRect().width);
+    return () => observer.disconnect();
+  }, [ref]);
   return width;
 }
 
 export default function MonthlyChart() {
   const { state } = useGoals();
-  const windowWidth = useWindowWidth();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const containerWidth = useContainerWidth(containerRef);
   const allData = getMonthlyTotals(state.goals);
 
-  const maxMonths = windowWidth < 700 ? 6 : 12;
+  const maxMonths = containerWidth > 0 && containerWidth < 500 ? 6 : 12;
   const data = allData.length > maxMonths ? allData.slice(-maxMonths) : allData;
 
   if (data.length === 0) return null;
@@ -28,7 +33,7 @@ export default function MonthlyChart() {
   return (
     <div className="monthly-chart-section">
       <p className="monthly-chart-title">Monthly deposits</p>
-      <div className="chart-container">
+      <div className="chart-container" ref={containerRef}>
         {data.map((d) => {
           const barPct = maxVal > 0 ? (d.total / maxVal) * 100 : 0;
           return (
@@ -49,3 +54,4 @@ export default function MonthlyChart() {
     </div>
   );
 }
+
